@@ -5,7 +5,7 @@ Untuk mengikuti seleksi Technical Test Reactjs Developer di PT Sekawan Media Inf
 
 ## Versi React
 
-Proyek ini menggunakan React versi react@18.2.0
+Proyek ini menggunakan React versi 18.2.0
 
 ## Versi Node
 
