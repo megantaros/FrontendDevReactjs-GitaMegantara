@@ -8,10 +8,8 @@ const LazyComponent = lazy(() => import("../components/RestaurantItem"));
 const Home = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [filter, setFilter] = useState({
-    open_now: false,
-    price: "",
-  });
+  const [checked, setChecked] = useState(false);
+  const [selectOptions, setSelectOptions] = useState([]);
 
   const getRestaurants = async () => {
     await http()
@@ -27,6 +25,9 @@ const Home = () => {
       .then((res) => {
         setData(
           res.data.data.filter((item) => item.name !== undefined).slice(0, 8)
+        );
+        setSelectOptions(
+          res.data.data.filter((item) => item.name !== undefined)
         );
       })
       .catch((err) => {
@@ -57,7 +58,7 @@ const Home = () => {
       });
   };
 
-  const options = data.filter((item) => item.price !== undefined);
+  const options = selectOptions.filter((item) => item.price !== undefined);
 
   options.sort((a, b) => {
     const getPriceMin = (str) => {
@@ -77,72 +78,50 @@ const Home = () => {
     </option>
   ));
 
-  const handleFilter = (e) => {
+  const handleFilter = async (e) => {
     const { name, value } = e.target;
-    setFilter({ ...filter, [name]: value });
-
-    if (!value) {
-      setFilter({ ...filter, [name]: false });
+    if (name === "open_now") {
+      setChecked(!checked);
+      setIsLoading(true);
+      await http()
+        .get(`list`, {
+          params: {
+            currency: "USD",
+            lang: "en_US",
+            location_id: 293918,
+            limit: 28,
+            offset: 0,
+            open_now: !checked,
+          },
+        })
+        .then((res) => {
+          setData(
+            res.data.data.filter((item) => item.name !== undefined).slice(0, 8)
+          );
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (name === "price") {
+      setData(selectOptions.filter((item) => item.price === value));
+    } else if (name === "category") {
+      setData(selectOptions.filter((item) => item.cuisine[0].name === value));
     }
-
-    console.log(filter);
   };
 
   useEffect(() => {
-    if (filter.open_now) {
-      http()
-        .get(`list`, {
-          params: {
-            currency: "USD",
-            lang: "en_US",
-            location_id: 293918,
-            limit: 28,
-            offset: 0,
-            open_now: true,
-          },
-        })
-        .then((res) => {
-          setData(
-            res.data.data.filter((item) => item.name !== undefined).slice(0, 8)
-          );
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else if (filter.price) {
-      http()
-        .get(`list`, {
-          params: {
-            currency: "USD",
-            lang: "en_US",
-            location_id: 293918,
-            limit: 28,
-            offset: 0,
-            price: filter.price,
-          },
-        })
-        .then((res) => {
-          setData(
-            res.data.data.filter((item) => item.name !== undefined).slice(0, 8)
-          );
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      getRestaurants();
-    }
-  }, [filter]);
+    getRestaurants();
+  }, []);
 
   return (
     <main className="min-h-screen">
       <header className="container">
         <h1 className="xl:text-4xl lg:text-4xl md:text-3xl text-3xl font-semibold">
-          Restaurants
+          Restaurants Apps
         </h1>
         <p className="text-sm text-gray-800">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum is simply dummy text of.
+          Find your favorite restaurant here.
         </p>
       </header>
 
@@ -153,6 +132,9 @@ const Home = () => {
             <label className="cursor-pointer label gap-2 py-3 border-b-2 border-base-content">
               <input type="checkbox" onChange={handleFilter} name="open_now" />
               <span className="font-semibold leading-6">Open Now</span>
+              {isLoading ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : null}
             </label>
             <div className="form-control border-b-2 border-base-content border-t-0 border-l-0 border-r-0">
               <select
@@ -167,11 +149,15 @@ const Home = () => {
               </select>
             </div>
             <div className="form-control">
-              <select className="cursor-pointer select border-b-2 border-base-content border-t-0 border-l-0 border-r-0 rounded-none">
+              <select
+                className="cursor-pointer select border-b-2 border-base-content border-t-0 border-l-0 border-r-0 rounded-none"
+                onChange={handleFilter}
+                name="category"
+              >
                 <option disabled selected>
                   Categories
                 </option>
-                {data.map((item) => (
+                {selectOptions.map((item) => (
                   <option key={item.location_id} value={item.cuisine[0].name}>
                     {item.cuisine[0].name}
                   </option>
