@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  min-height: 100vh;
+  background-color: #fff;
+  color: #333333;
+  font-family: "Open Sans", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Open Sans", sans-serif;
+}
+
+/* .swiper {
+  width: 100%;
+  height: 100%;
+} */
+
+.swiper-button-prev,
+.swiper-button-next {
+  background: #022a56 !important;
+  padding: 25px !important;
+  border-radius: 100%;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 700;
+}
