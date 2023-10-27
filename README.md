@@ -18,7 +18,7 @@ Proyek ini memerlukan Node.js versi v18.12.1
 3. Install Dependencie terlebih dahulu.
 ### npm install axios
 ### npm install react-router-dom localforage match-sorter sort-by
-### npm install npm i swiper
+### npm i swiper
 ### npm i -D daisyui@latest
 5. Jalankan perintah:
 ### npm run build
