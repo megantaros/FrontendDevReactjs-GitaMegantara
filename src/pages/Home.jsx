@@ -27,7 +27,7 @@ const Home = () => {
           res.data.data.filter((item) => item.name !== undefined).slice(0, 8)
         );
         setSelectOptions(
-          res.data.data.filter((item) => item.name !== undefined)
+          res.data.data.filter((item) => item.name !== undefined).slice(0, 8)
         );
       })
       .catch((err) => {
@@ -104,7 +104,7 @@ const Home = () => {
           console.log(err);
         });
     } else if (name === "price") {
-      setData(selectOptions.filter((item) => item.price === value));
+      setData(selectOptions.filter((item) => item.price === value).slice(0, 8));
     } else if (name === "category") {
       setData(selectOptions.filter((item) => item.cuisine[0].name === value));
     }
